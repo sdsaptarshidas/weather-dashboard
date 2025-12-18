@@ -1,27 +1,19 @@
 // src/components/CitySearch.jsx
 import { useState } from "react";
 
-function CitySearch() {
+function CitySearch({ cities, selectedCity, onAddCity, onSelectCity }) {
   const [inputValue, setInputValue] = useState("");
-  const [cities, setCities] = useState(["Kolkata"]);
-  const [selectedCity, setSelectedCity] = useState("Kolkata");
 
-  const handleAddCity = () => {
-    const trimmed = inputValue.trim();
-    if (!trimmed) return; // ignore empty
-    if (cities.includes(trimmed)) {
-      setInputValue("");
-      return; // ignore duplicates
-    }
-    setCities((prev) => [...prev, trimmed]);
-    setSelectedCity(trimmed);
+  const handleAddClick = () => {
+    if (!inputValue.trim()) return;
+    onAddCity(inputValue);
     setInputValue("");
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      handleAddCity();
+      handleAddClick();
     }
   };
 
@@ -29,7 +21,6 @@ function CitySearch() {
     <div className="bg-white text-dark rounded-3 p-3 shadow-sm">
       <h2 className="h5 mb-3">Search City</h2>
 
-      {/* Input + button */}
       <div className="d-flex gap-2 mb-3">
         <input
           type="text"
@@ -42,19 +33,17 @@ function CitySearch() {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={handleAddCity}
+          onClick={handleAddClick}
         >
           Add
         </button>
       </div>
 
-      {/* Current selection */}
       <p className="mb-2">
         <strong>Selected city:</strong>{" "}
         <span className="text-primary">{selectedCity}</span>
       </p>
 
-      {/* City list */}
       <ul className="list-group">
         {cities.map((city) => (
           <li
@@ -64,7 +53,7 @@ function CitySearch() {
               (city === selectedCity ? "active text-white" : "")
             }
             style={{ cursor: "pointer" }}
-            onClick={() => setSelectedCity(city)}
+            onClick={() => onSelectCity(city)}
           >
             <span>{city}</span>
             {city === selectedCity && (
