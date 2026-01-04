@@ -2,30 +2,54 @@
 import { useEffect, useState } from "react";
 import { getCurrentWeather } from "../services/weatherApi";
 
-function CurrentWeatherCard({ selectedCity }) {
+function CurrentWeatherCard({ selectedCity , onWeatherLoaded}) {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // useEffect(() => {
+  //   if (!selectedCity) return;
+
+  //   const fetchWeather = async () => {
+  //     setLoading(true);
+  //     setError(null);
+
+  //     try {
+  //       const data = await getCurrentWeather(selectedCity);
+  //       setWeather(data);
+  //     } catch (err) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchWeather();
+  // }, [selectedCity]);
+
   useEffect(() => {
-    if (!selectedCity) return;
+  if (!selectedCity) return;
 
-    const fetchWeather = async () => {
-      setLoading(true);
-      setError(null);
+  const fetchWeather = async () => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        const data = await getCurrentWeather(selectedCity);
-        setWeather(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+    try {
+      const data = await getCurrentWeather(selectedCity);
+      setWeather(data);
+      // Call callback with coordinates
+      if (onWeatherLoaded) {
+        onWeatherLoaded(data);
       }
-    };
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchWeather();
-  }, [selectedCity]);
+  fetchWeather();
+}, [selectedCity]); 
 
   if (loading) {
     return (
